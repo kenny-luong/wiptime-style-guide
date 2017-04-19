@@ -4,7 +4,7 @@ Styling Conventions for WIPTime
 **Source Code Layout**
 
 * UTF-8 for source file encoding
-*Two spaces for indentation (soft tabs). *No hard tabs*
+* Two spaces for indentation (soft tabs). *No hard tabs*
 ```
 # bad - four spaces
 def some_method
@@ -17,7 +17,7 @@ def some_method
 end
 ```
 
-*Don't use <code>;</code> to separate statements and expressions. Use only one expression per line.
+* Don't use <code>;</code> to separate statements and expressions. Use only one expression per line.
 ```
 # bad
 puts 'foobar'; # unnecessary semicolon
@@ -31,7 +31,7 @@ puts 'foo'
 puts 'bar'
 ```
 
-*Prefer a single-line format for class definitions with no body
+* Prefer a single-line format for class definitions with no body
 ```
 # bad 
 class FooError < StandardError
@@ -46,7 +46,7 @@ or
 class FooError < StandardError ; end # this is less okay but preferred over multi-lined class definitions with no body
 ```
 
-*Avoid single-line methods
+* Avoid single-line methods
 ```
 # bad 
 
@@ -63,14 +63,14 @@ end
 def method_name; end
 ```
 
-*Use spaces around operators, after commas, colons, and semicolons. Proper use of whitespace is key to readability.
+* Use spaces around operators, after commas, colons, and semicolons. Proper use of whitespace is key to readability.
 ```
 sum = 1 + 2
 a, b = 1, 2
 class FooError < StandardError; end
 ```
 
-*No spaces after <code>(</code>,<code>[</code>, or before <code>]</code>, <code>)</code>. Use spaces around <code>{</code> and before <code>}</code>
+* No spaces after <code>(</code>,<code>[</code>, or before <code>]</code>, <code>)</code>. Use spaces around <code>{</code> and before <code>}</code>
 ```
 # bad
 
@@ -83,15 +83,15 @@ some(arg).other
 [1, 2, 3].each { |e| puts e }
 ```
 
-*In cases where <code>{</code> and <code>}</code> are used for block and hasl literals, as well as string interpolation, the following should be used
+* In cases where <code>{</code> and <code>}</code> are used for block and hasl literals, as well as string interpolation, the following should be used
 
-*Hash literals*
+* Hash literals*
 ```
 # good - no spaces
 {one: 1, two: 2}
 ```
 
-*Interpolated expressions, there should be no padded-spacing inside the braces*
+* Interpolated expressions, there should be no padded-spacing inside the braces*
 ```
 # bad
 "From: #{ user.first_name }, #{ user.last_name }"
@@ -100,7 +100,7 @@ some(arg).other
 "From: #{user.first_name}, #{user.last_name}"
 ```
 
-*No space after <code>!</code>
+* No space after <code>!</code>
 ```
 # bad
 ! something
@@ -109,7 +109,7 @@ some(arg).other
 !something
 ```
 
-*No space inside range literals
+* No space inside range literals
 ```
 # bad
 1 .. 3
@@ -120,7 +120,7 @@ some(arg).other
 'a'...'z'
 ```
 
-*Indent <code>when</code> as deep as <code>case</code>
+* Indent <code>when</code> as deep as <code>case</code>
 ```
 # bad
 case
@@ -139,7 +139,7 @@ else
 end
 ```
 
-*When assigning the result of a condition expression to a variable, preserve the usual alignment of its branches
+* When assigning the result of a condition expression to a variable, preserve the usual alignment of its branches
 ```
 # bad
 kind = case year
@@ -171,7 +171,7 @@ result =
   end
 ```
 
-*Use empty lines between method definitions and also to break up methods into logical paragraphs internally. It is always recommended to try to keep methods as short as possible. Anything longer than a few lines should be considered for refactoring.
+* Use empty lines between method definitions and also to break up methods into logical paragraphs internally. It is always recommended to try to keep methods as short as possible. Anything longer than a few lines should be considered for refactoring.
 ```
 # bad
 
@@ -199,7 +199,7 @@ def some_method
 end
 ```
 
-*Don't use more than one empty line in a row
+* Don't use more than one empty line in a row
 ```
 # bad
  some_method
@@ -214,7 +214,7 @@ end
   some_method
 ```
 
-*Don't use empty lines around method, class, module, or block bodies
+* Don't use empty lines around method, class, module, or block bodies
 ```
 # bad
 
@@ -255,7 +255,7 @@ class Foo
 end
 ```
 
-*Avoid comma after the last paramenter in a method call, especially when the parameters are not on separate lines
+* Avoid comma after the last paramenter in a method call, especially when the parameters are not on separate lines
 ```
 # bad
 some_method(
@@ -276,7 +276,7 @@ some_method(
 some_method(size, count, color)
 ```
 
-*Use spaces around the <code>=</code> operator when assigning default values to method parameters:
+* Use spaces around the <code>=</code> operator when assigning default values to method parameters:
 ```
 #bad
 def some_method(arg1=:default, arg2=nil, arg3=[])
@@ -289,7 +289,7 @@ def some_method(arg1 = :default, arg2 = nil, arg3 = [])
 end
 ```
 
-*Avoid line continuation where not required. Avoid using line continuations for anything but string concatenation.
+* Avoid line continuation where not required. Avoid using line continuations for anything but string concatenation.
 ```
 # bad
 result = 1 - \
@@ -300,7 +300,7 @@ long_string = 'First part of the long string' \
               ' and the second part of the long string'
 ```
 
-*Use a trailing for multi-line method chaining
+* Use a trailing for multi-line method chaining
 ```
 # bad
 one.two.three
@@ -311,7 +311,7 @@ one.two.three.
   four
 ```
 
-*Align the parameters of a method call if they span more than one line.
+* Align the parameters of a method call if they span more than one line.
 ```
 # bad (double indent)
 def send_mail(source)
@@ -333,7 +333,7 @@ def send_mail(source)
 end
 ```
 
-*Align the elements of the array literals spanning multiple lines.
+* Align the elements of the array literals spanning multiple lines.
 ```
 # bad
 menu_item = ['Spam', 'Spam', 'Spam', 'Spam', 'Spam', 'Spam', 'Spam', 'Spam',
@@ -345,7 +345,7 @@ menu_item =
    'Baked beans', 'Spam', 'Spam', 'Spam', 'Spam', 'Spam']
 ```
 
-*Add underscores to large numeric literals
+* Add underscores to large numeric literals
 ```
 # bad
 num = 1000000
@@ -354,7 +354,7 @@ num = 1000000
 num = 1_000_000
 ```
 
-*Prefer smallcase letters for numeric literal prefixes. <code>0o</code> for octal, <code>0x</code> for hexadecimal, and <code>0b</code> for binary. Do not use <code>0d</code> for decimal literals.
+* Prefer smallcase letters for numeric literal prefixes. <code>0o</code> for octal, <code>0x</code> for hexadecimal, and <code>0b</code> for binary. Do not use <code>0d</code> for decimal literals.
 ```
 # bad
 num = 01234
@@ -371,10 +371,10 @@ num = 0b10101
 num = 1234
 ```
 
-*Limit lines to 80 characters
-*Avoid trailing whitespace.
-*End each file with a newline.
-*Don't use block comments.
+* Limit lines to 80 characters
+* Avoid trailing whitespace.
+* End each file with a newline.
+* Don't use block comments.
 ```
 # bad
 =begin
