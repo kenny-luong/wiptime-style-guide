@@ -75,7 +75,7 @@ a, b = 1, 2
 class FooError < StandardError; end
 ```
 
-*No spaces after <pre>(</pre>,<pre><code>[</code></pre>, or before <pre><code>]</code></pre>, <pre><code>)</code></pre>. Use spaces around <pre><code>{</code></pre> and before <pre><code>}</code></pre>
+*No spaces after <code>(</code>,<pre><code>[</code></pre>, or before <pre><code>]</code></pre>, <pre><code>)</code></pre>. Use spaces around <pre><code>{</code></pre> and before <pre><code>}</code></pre>
 
 ```
 # bad
