@@ -75,7 +75,7 @@ a, b = 1, 2
 class FooError < StandardError; end
 ```
 
-*No spaces after <code>(</code>,<pre><code>[</code></pre>, or before <pre><code>]</code></pre>, <pre><code>)</code></pre>. Use spaces around <pre><code>{</code></pre> and before <pre><code>}</code></pre>
+*No spaces after <code>(</code>,<code>[</code>, or before <code>]</code>, <code>)</code>. Use spaces around <code>{</code> and before <code>}</code>
 
 ```
 # bad
@@ -89,4 +89,4 @@ some(arg).other
 [1, 2, 3].each { |e| puts e }
 ```
 
-<pre><code>{</code></pre>
+<code>{</code>
