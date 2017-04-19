@@ -3,7 +3,7 @@ Styling Conventions for WIPTime
 
 **Source Code Layout**
 
-*UTF-8 for source file encoding
+* UTF-8 for source file encoding
 *Two spaces for indentation (soft tabs). *No hard tabs*
 ```
 # bad - four spaces
