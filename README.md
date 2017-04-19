@@ -18,7 +18,7 @@ def some_method
 end
 ```
 
-*Don't use <pre><code>;</code></pre> to separate statements and expressions. Use only one expression per line.
+*Don't use <code>;</code> to separate statements and expressions. Use only one expression per line.
 
 ```
 # bad
