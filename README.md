@@ -891,3 +891,920 @@ def some_method(some_arr)
   some_arr.size
 end
 ```
+
+* Use shorthand self assignment operators whenever applicable
+```
+# bad
+x = x + y
+x = x * y
+x = x**y
+x = x / y
+x = x || y
+x = x && y
+
+# good
+x += y
+x *= y
+x **= y
+x /= y
+x ||= y
+x &&= y
+```
+
+* Use `||=` to initialize variables only if they're not already initialized
+```
+# bad
+name = name ? name : 'Your Name'
+
+# bad
+name = 'Your Name' unless name
+
+# good - set name to 'Your Name', only if it's nil or false
+name ||= 'Your Name'
+```
+
+* Don't use `||=` to initialize boolean variables
+```
+# bad - would set 'enabled' to true even if it was false
+enabled ||= true
+
+# good
+enabled = true if enabled.nil?
+```
+
+* Use `&&=` to preprocess variables that may or may not exist. Using `&&=` wil change the value only if it exists, removing the need to check its existence with `if`
+```
+# bad
+if something
+  something = something.downcase
+end
+
+# bad
+something = something ? something.downcase : nil
+
+# good
+something &&= something.downcase
+```
+
+* Avoid explicit use of the case equality operator `===`. As its name implies, it is meant to be used implicity by `case` expressions and outside of them it yields some confusing code.
+```
+# bad
+Array === something
+(1..100) === 7
+/something/ === some_string
+
+# good
+something.is_a?(Array)
+(1..100).include?(7)
+some_string =~ /something/
+```
+
+* Do not use `eql?` when using `==` will do. `eql?` is rarely needed.
+```
+# bad - eql? is the same as == for strings
+'ruby'.eql? some_str
+
+# good
+'ruby' == some_str
+1.0.eql? x # eql? makes ssense here if you want to differentiate between an integer and a float
+```
+
+* Do not put a space between a method name and the opening parenthesis
+```
+# bad
+f (3 + 2) + 1
+
+# good
+f(3 + 2) + 1
+```
+
+* Do not use nested method definitions
+```
+# bad
+def foo(x)
+  def bar(y)
+    # body omitted
+  end
+end
+
+# good
+def bar(y)
+  # body omitted
+end
+
+def foo(x)
+  bar(x)
+end
+```
+
+* Prefix with `_` unused block parameters and local variables.
+```
+# bad
+result = hash.map { |k, v| v + 1 }
+
+def something(x)
+  unused_var, used_var = something_else(x)
+end
+
+# good
+result = hash.map { |_k, v| v + 1 }
+
+def something(x)
+  _unused_var, used_var = something_else(x)
+end
+```
+
+* Use `$stdout/$stderr/$stdin` instead of `STDOUT/STDERR/STDIN`. `STDOUT/STDERR/STDIN` are constants.
+
+* Use `warn` instead of `$stderr.puts`. `warn` allows you to suppress warnings if you need to (by setting the warn level to 0 via `-W0`
+
+* When using named format string tokens, favor `%<name>s` over `%{name}` because it encodes information about the type of the value
+```
+# bad
+format('Hello, %{name}', name: 'John')
+
+# good
+format('Hello, %<name>s', name: 'John')
+```
+
+* Use `Array#join` over `Array#*` with a string argument
+```
+# bad
+%w[one two three] * ', '
+# => 'one, two, three'
+
+# good
+%w[one two three].join(', ')
+# => 'one, two, three'
+```
+
+* Use `Array()` instead of explicit `Array` check or `[*var]`, when dealing with a variable you want to treat as an Array, but you're not certain it's an array.
+```
+# bad
+paths = [paths] unless paths.is_a? Array
+paths.each { |path| do_something(path) }
+
+# bad (this always creates a new Array instance
+[*paths].each { |path| do_something(path) }
+
+# good
+Array(paths).each { |path| do_something(path) }
+```
+
+* Use `Comparable#between?` instead of complex comparison logic when possible
+```
+# bad
+do_something if x >= 1000 && x <= 2000
+
+# good
+do_something if x.between?(1000, 2000)
+```
+
+* Use predicate methods to perform explicit comparisons. Numeric comparisons are also OK.
+```
+# bad
+if x % 2 == 0
+end
+
+if x % 2 == 1
+end
+
+if x == nil
+end
+
+# good
+if x.even?
+end
+
+if x.odd?
+end
+
+if x.nil?
+end
+
+if x.zero?
+end
+
+if x == 0
+end
+```
+
+* Don't do explicit non-`nil` checks unless you're dealing with boolean values.
+```
+# bad
+do_something if !something.nil?
+do_something if something != nil
+
+# good
+do_something if something
+
+def value_set?
+  !@some_boolean.nil?
+end
+```
+
+* Avoid the use of `BEGIN` blocks.
+
+* Do not use `END` blocks. Use `Kernel#at_exit` instead.
+```
+# bad
+END { puts 'Goodbye!' }
+
+# good
+at_exit { puts 'Goodbye!' }
+```
+
+* Avoid the use of nested conditionals for flow of control.
+
+  Prefer a guard clause when you can assert invalid data. A guard clause is a conditional statement at the top of a function that baisl out as soon as it can.
+```
+# bad
+def compute_thing(thing)
+  if thing[:foo]
+    update_with_bar(thing[:foo])
+    if thing[:foo][:bar]
+      partial_compute(thing)
+    else
+      re_compute(thing)
+    end
+  end
+end
+
+# good
+def compute_thing(thing)
+  return unless thing[:foo] # guard clause
+  update_with_bar(thing[:foo])
+  return re_compute(thing) unless thing[:foo][:bar]
+  partial_compute(thing)
+end
+```
+
+  Prefer `next` in loops instead of conditional blocks
+  ```
+  # bad
+  [0, 1, 2, 3].each do |item|
+    if item > 1
+      puts item
+    end
+  end
+  
+  # good
+  [0, 1, 2, 3].each do |item|
+    next unless item > 1
+    puts item
+  end
+  ```
+
+* Prefer `reverse_each` to `reverse.each` because some classes that `include Enumerable` will provide an efficient implementation. Even in the worst case where a class does not provide a specialized implementation, the general implementation inherited from `Enumberable` will be at least as efficient as using `reverse.each`
+```
+# bad
+array.reverse.each { ... }
+
+# good
+array.reverse_each { ... }
+```
+
+# Naming
+
+* Name identifiers in English
+
+* Use `snake_case` for symbols, methods and variables.
+```
+# bad
+:'some symbol'
+:SomeSymbol
+:someSymbol
+
+someVar = 5
+var_10  = 10
+
+def someMethod
+end
+
+def SomeMethod
+end
+
+# good
+:some_symbol
+
+some_var = 5
+var10    = 10
+
+def some_method
+end
+```
+
+* Do not separate numbers from letters on symbols, methods and variables
+```
+# bad
+:some_sym_1
+
+some_var_1 = 1
+
+def some_method_1
+end
+
+# good
+:some_sym1
+
+some_var1 = 1
+
+def some_method1
+end
+```
+
+* Use `CamelCase` for classes and modules. (Keep acronyms like HTTP, RFC, XML uppercase.)
+```
+# bad
+class Someclass
+end
+
+class Some_Class
+end
+
+class SomeXml
+end
+
+class XmlSomething
+end
+
+# good
+class SomeClass
+end
+
+class SomeXML
+end
+
+class XMLSomething
+end
+```
+
+* Use `snake_case` for naming files, e.g. `hello_world.rb`
+
+* Use `snake_case` for naming directories, e.g. `lib/hello_world/hello_world.rb`
+
+* Aim to have a single class/module per source file. Name the file name as the class/module, but replacing CamelCase with snake_case
+
+* Use `SCREAMING_SNAKE_CASE` for other constants
+```
+# bad
+SomeConst = 5
+
+# good
+SOME_CONST = 5
+```
+
+* Names of methods that return a boolean value should end in a question mark (i.e. `Array#empty?`). Methods that don't return a boolean, shouldn't end in a question mark.
+
+* Avoid prefixing predicate methods with the auxillary verbs such as `is`, `does`, or `can`. These words are redundant and inconsistent with the style of boolean methods in Ruby's core library such as `empty?` and `include?`
+```
+# bad
+class Person
+  def is_tall?
+    true
+  end
+  
+  def can_play_basketball?
+    false
+  end
+  
+  def does_like_candy?
+    true
+  end
+end
+
+# good
+class Person
+  def tall?
+    true
+  end
+  
+  def basketball_player?
+    false
+  end
+  
+  def likes_candy?
+    true
+  end
+end
+```
+
+* The names of potentiallity dangerous methods (i.e. methods that modify `self` or the arguments, `exit!` (doesn't run the finalizers like exit does, etc) should end with an exclamation mark if there exists a safe version of that dangerous method.
+```
+# bad - there is no matching 'safe' method
+class Person
+  def update!
+  end
+end
+
+# good
+class Person
+  def update
+  end
+end
+
+# good
+class Person
+  def update!
+  end
+  
+  def update
+  end
+end
+```
+
+# Comments
+
+* Write self-documenting code
+* Write comments in English
+* Use one space between the leading `#` character of the comment and the text of the comment
+* Comments longer than a word are capitalized and use punctiation. Use once space after periods.
+* Avoid superfluous comments.
+```
+# bad
+counter += 1 # Increments counter by one.
+```
+
+* Keep existing comments up-to-date. An outdated comment is worse than no comment at all.
+* Avoid writing comments to explain bad code. Refactor the code to make it self-explanatory.
+
+# Comment Annotations
+
+* Annotations should usually be written on the line immediately above the relevant code
+* The annotation keyboard is followed by a colon and a space, then a note describing the problem.
+* If multiple lines are required to describe the problem, subsequent lines should be indented three spaces after the `#`.
+```
+def bar
+  # FIXME: This has crashed occasionally since v3.2.1. IT may
+  #    be related to the BarBazUtilupgrade.
+  baz(:quux)
+end
+```
+
+* In cases where the problem is so obvious that any documentation would be redundant, annotations may be left at the end of the offending line with no note. This usage should be the exception and not the rule.
+```
+def bar
+  sleep 100 # OPTIMIZE
+end
+```
+
+* Use `TODO` to note missing features or functionality that should be added at a later date.
+* Use `FIXME` to note broken code that needs to be fixed.
+* Use `OPTIMIZE` to note slow or inefficient code that may cause performance problems.
+* Use `HACK` to note code smells where questionable coding practices were used and should be refactored.
+* Use `REVIEW` to note anything that should be looked at to confirm it is working as intended. For example, `REVIEW: Are we sure this is how the client does X correctly?`
+* If other custom annotation keywords are necessary, be sure to document them.
+
+# Magic Comments
+
+* Place magic comments above all code and documentation. Magic comments should only go below shebangs if they are needed in your source file.
+```
+# bad
+# Some documentation about Person
+# frozen_string_literal: true
+class Person
+end
+
+# good
+# frozen_string_literal: true
+# Some documentation about Person
+class Person
+end
+```
+
+* Use one magic comment per line if you need multiple.
+```
+# bad
+# -*- frozen_string_literal: true; encoding: ascii-8bit -*-
+
+# good
+# frozen_string_literal: true
+# encoding: ascii-8bit
+```
+
+# Classes & Modules
+
+* Use a consistent structure in your class definitions.
+```
+class Person
+  # extend and include go first
+  extend SomeModule
+  include AnotherModule
+  
+  # inner classes
+  CustomError = Class.new(StandardError)
+  
+  # constants are next
+  SOME_CONSTANT = 20
+  
+  #attribute macros
+  attr_reader :name
+  
+  # followed by other macros
+  validates :name
+  
+  #public class methods, next
+  def self.some_method
+  end
+  
+  # initialization goes between class methods and other instance methods
+  def initialize
+  end
+  
+  # followed by other public instance methods
+  def some_method
+  end
+  
+  # protected and private methods are grouped near the end
+  protected
+  
+  def some_protected_method
+  end
+  
+  private
+  
+  def some_private_method
+  end
+end
+```
+
+* Split multiple mixins into separate statements.
+```
+# bad
+class Person
+  include Foo, Bar
+end
+
+# good
+class Person
+  # multiple mixins go with separate statements
+  include Foo
+  include Bar
+end
+```
+
+* Don't next multi-line classes within classes. Try to have nested classes each in their own file in a folder named like the containing class.
+```
+# bad
+
+# foo.rb
+class Foo
+  class Bar
+    # methods
+  end
+  
+  class Car
+    # methods
+  end
+  
+  # methods
+end
+
+# good
+
+# foo.rb
+class Foo
+  # methods
+end
+
+# foo/bar.rb
+class Foo
+  class Bar
+    # methods
+  end
+end
+
+# foo/car.rb
+class Foo
+  class Car
+    # methods
+  end
+end
+```
+
+* Prefer modules to classes with only class methods. Classes should be used only when it makes sense to create instances out of them.
+```
+# bad
+class SomeClass
+  def self.some_method
+    # body
+  end
+  
+  def self.some_other_method
+    # body
+  end
+end
+
+# good
+module SomeModule
+  module_function
+  
+  def some_method
+    # body
+  end
+  
+  def some_other_method
+    # body
+  end
+end
+```
+
+* Favor the use of `module_function` over `extend self` wheny ou want to turn a module's instance methods into class methods.
+```
+# bad
+module Utilities
+  extend self
+  
+  def parse_something(string)
+  end
+  
+  def other_utility_method(number, string)
+  end
+end
+
+# good
+module Utilities
+  module_function
+  
+  def parse_something(string)
+  end
+  
+  def other_utility_method(number, string)
+  end
+end
+```
+
+  `module_function` vs `extend self`:
+  
+  `module_function` makes the given instance methods private, then duplicates and puts them into the module's metaclass as public methods. `extend self`adds all instance methods to the module's singleton, leaving their visibilities unchanged. 
+  
+  ```
+  module M
+    extend self
+
+    def a; end
+
+    private
+    def b; end
+  end
+
+  module N
+    def c; end
+
+    private
+    def d; end
+
+    module_function :c, :d
+  end
+
+  class O
+    include M
+    include N
+  end
+
+  M.a
+  M.b  # NoMethodError: private method `b' called for M:Module
+  N.c
+  N.d
+  O.new.a
+  O.new.b  # NoMethodError: private method `b' called for O
+  O.new.c  # NoMethodError: private method `c' called for O
+  O.new.d  # NoMethodError: private method `d' called for O
+  ```
+
+* Try to make your classes as SOLID as possible
+* Always supply a proper `to_s` method for classes that represent domain objects.
+```
+class Person
+  attr_reader :first_name, :last_name
+  
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name = last_name
+  end
+  
+  def to_s
+    "#{@first_name #{@last_name}"
+  end
+end
+```
+
+* Use the `attr` family of functions to define trivial accessors or mutators
+```
+# bad
+class Person
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name  = last_name
+  end
+  
+  def first_name
+    @first_name
+  end
+  
+  def last_name
+    @last_name
+  end
+end
+
+# good
+class Person
+  attr_reader :first_name, :last_name
+  
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name  = last_name
+  end
+end
+```
+
+* For accessors and mutators, avoid prefixing methods name with `get_` and `set_`. It is a Ruby convention to use attribute names for accessors (readers) and `attr_name=` for mutators (writers)
+```
+# bad
+class Person
+  def get_name
+    "#{@first_name} #{@last_name}"
+  end
+  
+  def set_name(name)
+    @first_name, @last_name = name.split(' ')
+  end
+end
+
+# good
+class Person
+  def name
+    "#{@first_name} #{@last_name}"
+  end
+  
+  def name=(name)
+    @first_name, @last_name = name.split(' ')
+  end
+end
+```
+
+# Numbers
+
+* Use `Integer` check type of an integer number. Since `Fixnum` is platform-dependent, checking against it will return different results on 32-bit and 64-bit machines.
+```
+timestamp = Time.now.to_i
+
+# bad
+timestamp.is_a? Fixnum
+timestamp.is_a? Bignum
+
+# good
+timestamp.is_a? Integer
+```
+
+* Prefer to use ranges when generating random numbers instead of integers with offsets, since it clearly states your intentions.
+```
+# bad
+rand(6) + 1
+
+# good
+rand(1..6)
+```
+
+# Strings
+
+* Prefer string interpolation instead of string concatenation:
+```
+# bad
+email_with_name = user.name + ' <' + user.email + '>'
+
+# good
+email_with_name = "#{user.name} <#{user.email>"
+```
+
+* Prefer single-quoted strings when you don't need string interpolation or special symbols such as `\t`, `\n`, `'`, etc.
+
+* Don't use the character literal syntax `?x`. Since Ruby 1.9, it's basically redundant - `?x` would be interpreted as `'x'`
+```
+# bad
+char = ?c
+
+# good
+char = 'c'
+```
+
+* Don't leave out `{}` around instance and global variables being interpolated into a string.
+```
+class Person
+  attr_reader :first_name, :last_name
+  
+  def initialize(first_name, last_name)
+    @first_name = first_name
+    @last_name  = last_name
+  end
+  
+  # bad
+  def to_s
+    "#@first_name #@last_name"
+  end
+  
+  # good
+  def to_s
+    "#{@first_name #{@last_name}"
+  end
+end
+
+$global = 0
+# bad
+puts "$global = #$global"
+
+# good
+puts "$global = #{$global}"
+```
+
+* Don't use `Object#to_s` on interpolated objects. It's invoked on them automatically.
+```
+# bad
+message = "This is the #{result.to_s}."
+
+# good
+message = "This is the #{result}."
+```
+
+* Avoid using `String#+` when you need to construct large data chunks. Instead, use `String#<<`. Concatenation mutates the string instance in-place and is always faster than `String#+`, which creates new string objects.
+```
+# bad
+html = ''
+html += '<h1>Page Title</h1>'
+
+paragraphs.each do |paragraph|
+  html += "<p>#{paragraph}</p>"
+end
+
+# good and faster
+html = ''
+html << '<h1>Page Title</h1>'
+
+paragraphs.each do |paragraph|
+  html << "<p>#{paragraph}</p>"
+end
+```
+
+* Don't use `String#gsub` in scenarios in which you can use a faster more specialized alternative.
+```
+url = 'http://example.com'
+str = 'lisp-case-rules'
+
+# bad
+url.gsub('http://', 'https://')
+str.gsub('-', '_')
+
+# good
+url.sub('http://', 'https://')
+str.tr('-', '_')
+```
+
+# Date &  Time
+
+* Prefer `Time.now` over `Time.new` when retrieving the current system time.
+* Don't use `DateTime` unless you need to account for historical calendar reform -- and if you do, explicity specifiy the `start` argument to clearly state your intentions
+```
+# bad
+DateTime.now - uses DateTime for current time
+
+# good - uses Time for current time
+Time.now
+
+# bad - uses DateTime for modern date
+DateTime.iso8601('2016-06-29')
+
+# good - uses Date for modern date
+Date.iso8601('2016-06-29')
+
+# good uses DateTime with start argument for historical date
+DateTime.iso8601('1751-04-23', Date::ENGLAND)
+```
+
+# Misc
+
+* Write `ruby -w` safe code.
+* Avoid hashes as optional parameters. Does the method do too much? (Object initializers are exceptions for this rule).
+* Avoid methods longer than 10 LOC (lines of code). Ideally, most methods will be shorter than 5 LOC. Empty lines do not contribute to the relevant LOC.
+* Avoid parameter lists longer than three or four parameters.
+* If you really need "global" methods, add them to Kernel and make them private
+* Use module instance variables instead of global variables
+```
+# bad
+$foo_bar = 1
+
+# good
+module Foo
+  class << self
+    attr_accessor :bar
+  end
+end
+
+Foo.bar = 1
+```
+
+* Code in a functional way, avoiding mutation when that makes sense.
+* Do not mutate parameters unless that is the purpose of the method.
+
+  `mutation` is when you have to change an object
+
+* Avoid more than three levels of block nesting.
