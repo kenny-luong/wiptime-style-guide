@@ -4,19 +4,7 @@ Styling Conventions for WIPTime
 # Source Code Layout
 
 * UTF-8 for source file encoding
-* Two spaces for indentation (soft tabs). *No hard tabs*
-```
-# bad - four spaces
-def some_method
-    do_something
-end
-
-# good - two spaces
-def some_method
-  do_something
-end
-```
-
+* Four spaces for indentation (soft tabs). *No hard tabs*
 * Don't use <code>;</code> to separate statements and expressions. Use only one expression per line.
 ```
 # bad
